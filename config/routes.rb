@@ -1,11 +1,14 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { omniauth_callbacks: :callbacks }
-  root "tweets#index"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  namespace :api do
+    namespace :v1 do
+      mount_devise_token_auth_for "User", at: "auth", controllers: {
+        sessions: "api/v1/overrides/sessions",
+        registrations: "api/v1/overrides/registrations"
+      }
 
-  # Defines the root path route ("/")
-  # root "articles#index"
-  resources :tweets
-  resources :users, only: [:show]
-  resources :likes
+      resources :tweets
+      resources :users, only: [:show]
+      resources :likes
+    end
+  end
 end
