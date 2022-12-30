@@ -1,7 +1,7 @@
 module Api
   module V1
     class TweetsController < ApplicationController
-      skip_before_action :authenticate_user!, only: %i[index show]
+      skip_before_action :authenticate_v1_user!, only: %i[index show]
       def index
         @tweets = Tweet.all.order(updated_at: :desc).where(replied_to_id: nil)
         render json: @tweets
@@ -9,12 +9,13 @@ module Api
 
       def show
         @tweet_got = Tweet.find(params[:id])
-        render json: @tweet_got
+        @likes = Like.where(tweet_id: @tweet_got.id)
+        render json: { tweet: @tweet_got, likes: @likes }
       end
 
       def create
         @tweet_new = Tweet.new(tweet_params)
-        @tweet_new.user_id = current_user.id
+        @tweet_new.user_id = current_v1_user.id
         @tweet_new.save
 
         render json: @tweet_new, status: :created
