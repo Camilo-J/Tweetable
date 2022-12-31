@@ -10,7 +10,7 @@ module Api
       def show
         @tweet_got = Tweet.find(params[:id])
         @likes = Like.where(tweet_id: @tweet_got.id)
-        render json: { tweet: @tweet_got, likes: @likes }
+        render json: @tweet_got
       end
 
       def create
